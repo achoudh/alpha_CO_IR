@@ -16,6 +16,15 @@ function hstatT(ev, eu, com0_ml)
             rvec12 = com0_ml[n1,:] - com0_ml[n2,:]
             rvec12[1] = rvec12[1] - 2*nx*round(Int, rvec12[1]/(2*nx))
             rvec12[2] = rvec12[2] - 2*ny*round(Int, rvec12[2]/(2*ny))
+            # rvec12[3] = rvec12[3] - 2*nz*round(Int, rvec12[3]/(2*nz))
+
+            # rvec12[1] = rvec12[1] - nx*round(Int, rvec12[1]/(nx))
+            # rvec12[2] = rvec12[2] - ny*round(Int, rvec12[2]/(ny))
+            # rvec12[3] = (a0_CO/a0_surf)*(rvec12[3] - nz*round(Int, rvec12[3]/(nz)/(a0_CO/a0_surf)))
+            # rvec12[3] = rvec12[3] - nz*round(Int, rvec12[3]/(nz/sqrt(2)))/sqrt(2)
+            rvec12[3] = rvec12[3] - a0_CO/a0_surf*nz*round(Int, rvec12[3]/(a0_CO/a0_surf*nz))
+        # rvec12[3] = rvec12[3] - sqrt(2)*nz*round(Int, rvec12[3]/(sqrt(2)*nz))
+
             rvec12 = a0_surf .* rvec12
             r12 = norm(rvec12)
             en = rvec12/r12

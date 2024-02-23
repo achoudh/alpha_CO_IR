@@ -34,7 +34,7 @@ trig_uc = (sin.(θ_uc), cos.(θ_uc), sin.(ϕ_uc), cos.(ϕ_uc))
 # overlayer-surface distance (reduced units)
 z_ol = z_ml + 0.5*a0_CO/a0_surf #+ 10.00*a0_CO/a0_surf
 # get an overlayer molecules' reduced positions and orientation
-com0_ol, phi_ol, theta_ol = overlayer(θ_uc, ϕ_uc, z_ol)
+com0_ol, phi_ol, theta_ol = overlayer(θ_uc, ϕ_uc, 0.0)
 # δr_ol = zeros(Float64,nmols_ol2,2)
 
 
