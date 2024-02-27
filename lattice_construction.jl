@@ -24,7 +24,7 @@ function monolayer(θ_uc::Vector{Float64}, ϕ_uc::Vector{Float64}, z::Float64)
 end
 
 # Defines c.-of-m. and orientation of the molecules in overlayer
-function overlayer(θ_uc::Vector{Float64}, ϕ_uc::Vector{Float64}, z::Float64)
+function overlayer_cuboid(θ_uc::Vector{Float64}, ϕ_uc::Vector{Float64}, z::Float64)
 
     com::Matrix{Float64} = zeros(nmols_ucol*nx*ny*nz, 3)
 
@@ -54,4 +54,37 @@ function overlayer(θ_uc::Vector{Float64}, ϕ_uc::Vector{Float64}, z::Float64)
     theta::Vector{Float64}  = repeat(θ_uc, outer=nx*ny*nz)
 
     return com, phi, theta
+end
+
+
+function overlayer()
+
+    com::Matrix{Float64} = zeros(nmols_ucol*nx*ny*nz, 3)
+
+    com_uc::Matrix{Float64} = [ [0.0 0.0 0.0];  
+                                [0.5 0.5 0.0];
+                                [0.0 0.5 0.5];
+                                [0.5 0.0 0.5]]
+
+    n = 1
+    for k::Int64 in 0:nz-1
+        for i::Int64 in 0:nx-1
+            for j::Int64 in 0:ny-1
+                com[n:n+nmols_ucol-1,1] .= com_uc[:,1] .+ i
+                com[n:n+nmols_ucol-1,2] .= com_uc[:,2] .+ j
+                com[n:n+nmols_ucol-1,3] .= com_uc[:,3] .+ k
+                n += nmols_ucol
+            end
+        end
+    end
+
+    uvec_uc::Vector{Vector{Float64}} = [[ 1.0,  1.0,  1.0],
+                                        [ 1.0, -1.0, -1.0],
+                                        [-1.0,  1.0, -1.0],
+                                        [-1.0, -1.0,  1.0]]
+                                        
+    uvec::Vector{Vector{Float64}}  = repeat(uvec_uc, outer=nx*ny*nz)
+    # theta::Vector{Float64}  = repeat(θ_uc, outer=nx*ny*nz)
+
+    return com, uvec
 end
