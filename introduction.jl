@@ -28,9 +28,11 @@ z_ml = 3.35e-10/a0_surf
 # construct an overlayer
 
 # orientation of molecules in an overlayer's unit cell
-θ_uc::Vector{Float64} = [ 3, 1, 3, 1, 1, 3, 1, 3]*pi/4.0  # The old structure [ 3, 1, 3, 1, 3, 1, 3, 1]*pi/4.0 is not correct
-ϕ_uc::Vector{Float64} = [-1, 0,-1, 0, 2, 1, 2, 1]*pi/2.0 
-trig_uc = (sin.(θ_uc), cos.(θ_uc), sin.(ϕ_uc), cos.(ϕ_uc))
+# θ_uc::Vector{Float64} = [ 3, 1, 3, 1, 1, 3, 1, 3]*pi/4.0  # The old structure [ 3, 1, 3, 1, 3, 1, 3, 1]*pi/4.0 is not correct
+# ϕ_uc::Vector{Float64} = [-1, 0,-1, 0, 2, 1, 2, 1]*pi/2.0 
+# trig_uc = (sin.(θ_uc), cos.(θ_uc), sin.(ϕ_uc), cos.(ϕ_uc))
+
+
 # overlayer-surface distance (reduced units)
 z_ol = z_ml + 0.5*a0_CO/a0_surf #+ 10.00*a0_CO/a0_surf
 # get an overlayer molecules' reduced positions and orientation
