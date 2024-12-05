@@ -34,7 +34,7 @@ z_ml = 3.35e-10/a0_surf
 
 
 # overlayer-surface distance (reduced units)
-z_ol = z_ml + 0.5*a0_CO/a0_surf #+ 10.00*a0_CO/a0_surf
+z_ol = z_ml +  0.5*a0_CO/a0_surf #+ 10.00*a0_CO/a0_surf
 # get an overlayer molecules' reduced positions and orientation
 com_ol::Matrix{Float64}, eu::Vector{Vector{Float64}} = overlayer()
 # δr_ol = zeros(Float64,nmols_ol2,2)
@@ -45,18 +45,18 @@ com_ol::Matrix{Float64}, eu::Vector{Vector{Float64}} = overlayer()
 ######################
 
 # Data to built up the wavenumber array
-range   = 10  # "Wavenumbers"
+range   = 20  # "Wavenumbers"
 dtponts = 5*200
 step    = 2 * (range / dtponts)
 # νk = collect(ν0[2] - range :step:ν0[1] + range)
 Δν = 0.2 # cm-1 FWHM of the Gaussian convolution
 
-μ00, μ11, μ01 = -0.112, -0.087, 0.105 # "Debyes"; μ00 and μ11: R.Disselkamp et al., Surface Science 240 (1990) 193-210; for 12C16O. μ01 calculated for 13C18O.
+μ00, μ11, μ01 = -0.112, -0.087, 0.105 # "Debye"; μ00 and μ11: R.Disselkamp et al., Surface Science 240 (1990) 193-210; for 12C16O. μ01 calculated for 13C18O (=0.105)
 unit1         = 5034.12*1e-30 # conversion factor from Debye^2/m^3 to wavenumber
 unit2         = 7.51691023
 
 #electric field
-θe       = 45.0*pi/180 # Tilt of incident beam
+θe       = 50.0*pi/180 # Tilt of incident beam
 nar, ncr = 1.0, 1.52
 nrat     = nar/ncr
 

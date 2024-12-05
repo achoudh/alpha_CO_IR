@@ -61,27 +61,30 @@ function overlayer()
 
     com::Matrix{Float64} = zeros(nmols_ucol*nx*ny*nz, 3)
 
-    com_uc::Matrix{Float64} = [ [0.0 0.0 0.0];  
-                                [0.5 0.5 0.0];
-                                [0.0 0.5 0.5];
-                                [0.5 0.0 0.5]]
+    a1 = 0.5 # 0.5
+    com_uc::Matrix{Float64} = [ [0.0 0.0 0.0];   # centre of mass unit cell
+                                [a1  a1  0.0];
+                                [0.0 a1  a1 ];
+                                [a1  0.0 a1 ]]
 
     n = 1
     for k::Int64 in 0:nz-1
         for i::Int64 in 0:nx-1
             for j::Int64 in 0:ny-1
-                com[n:n+nmols_ucol-1,1] .= com_uc[:,1] .+ i
-                com[n:n+nmols_ucol-1,2] .= com_uc[:,2] .+ j
-                com[n:n+nmols_ucol-1,3] .= com_uc[:,3] .+ k
+                com[n:n+nmols_ucol-1,1] .= com_uc[:,1] .+ i  # x positions of crystal
+                com[n:n+nmols_ucol-1,2] .= com_uc[:,2] .+ j  # y ""
+                com[n:n+nmols_ucol-1,3] .= com_uc[:,3] .+ k  # z ""
                 n += nmols_ucol
             end
         end
     end
 
-    uvec_uc::Vector{Vector{Float64}} = [[ 1.0,  1.0,  1.0],
-                                        [ 1.0, -1.0, -1.0],
-                                        [-1.0,  1.0, -1.0],
-                                        [-1.0, -1.0,  1.0]]
+    uv_1 = 1.0
+    
+    uvec_uc::Vector{Vector{Float64}} = [[ uv_1,  uv_1,  uv_1],   # unit cell vector
+                                        [ uv_1, -uv_1, -uv_1],
+                                        [-uv_1,  uv_1, -uv_1],
+                                        [-uv_1, -uv_1,  uv_1]]
                                         
     uvec::Vector{Vector{Float64}}  = repeat(uvec_uc, outer=nx*ny*nz)
     # theta::Vector{Float64}  = repeat(θ_uc, outer=nx*ny*nz)
