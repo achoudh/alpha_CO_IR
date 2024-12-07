@@ -56,7 +56,7 @@ unit1         = 5034.12*1e-30 # conversion factor from Debye^2/m^3 to wavenumber
 unit2         = 7.51691023
 
 #electric field
-θe       = 50.0*pi/180 # Tilt of incident beam
+θe       = 43*pi/180 # Tilt of incident beam
 nar, ncr = 1.0, 1.52
 nrat     = nar/ncr
 
