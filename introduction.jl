@@ -16,7 +16,7 @@ nmols_ucol::Int64 = 4 # 8
 r_CO::Float64 = 1.14e-10       # CO bondlength in m
 a0_CO::Float64 = 5.64e-10      # CO layer lattice constant, m
 a0_NaCl::Float64 = 5.64e-10    # NaCl lattice constant, m
-a0_surf::Float64 = 3.99e-10    # NaCl surface lattice constant
+a0_surf::Float64 = 3.99e-10    # NaCl surface lattice constant, m
 
 v::Float64 = 0.4903e-10 #Oxygen
 w::Float64 = 0.6437e-10 #Carbon

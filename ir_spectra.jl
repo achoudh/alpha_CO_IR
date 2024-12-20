@@ -16,12 +16,12 @@ function hstatT(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::Matrix
             rvec12::Vector{Float64} = com_ol[n1,:] - com_ol[n2,:]
             rvec12[1] = rvec12[1] - nx*round(Int, rvec12[1]/(nx)) # periodic boundary conditions in x
             rvec12[2] = rvec12[2] - ny*round(Int, rvec12[2]/(ny)) # periodic boundary conditions in y
-            rvec12[3] = rvec12[3] - ny*round(Int, rvec12[3]/(nz)) # no periodic boundary conditions in z
+            rvec12[3] = rvec12[3] - ny*round(Int, rvec12[3]/(nz)) # periodic boundary conditions in z
             
             rvec12 = a0_CO .* rvec12
             r12::Float64 = norm(rvec12)
             en::Vector{Float64} = rvec12/r12
-
+            #print(r12)
             if Interaction_radius_cutoff == true
                 if r12 > interaction_cut_off_radius
                     force = 0.0
