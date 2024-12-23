@@ -45,9 +45,13 @@ function hstatT(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::Matrix
         h[n1,n1] = ev[n1] + unit1*(μ11 - μ00)*μ00*h[n1,n1]
     end
 
+    println(typeof(h))  # Matrix{Float64}
+    println(size(h))    # (copy_size*4*4, copy_size*4*4)
+    println(ndims(h))   # 2
+    println(size(h)[1])
+
     # return eigenvalues and eigenvectors
-    return eigen(h)
-       
+    return [zeros(size(h)[1]), zeros(size(h))] #eigen(h) s     [1D array of len: copy_size*4*4; 2D array of size copy_size*4*4 x copy_size*4*4]
 end
 
 # IR spectra
