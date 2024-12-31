@@ -21,7 +21,7 @@ function hstatT(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::Matrix
             rvec12 = a0_CO .* rvec12
             r12::Float64 = norm(rvec12)
             en::Vector{Float64} = rvec12/r12
-            #print(r12)
+
             if Interaction_radius_cutoff == true
                 if r12 > interaction_cut_off_radius
                     force = 0.0
@@ -53,7 +53,7 @@ function hstatT(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::Matrix
     # return eigenvalues and eigenvectors
     # eigen(h) get eigenvalues and eigenvectors of h
 
-    return [zeros(size(h)[1]), h] #eigen(h) s     [1D array of len: copy_size*4*4; 2D array of size copy_size*4*4 x copy_size*4*4]
+    return eigen(h) # [1D array of len: copy_size*4*4; 2D array of size copy_size*4*4 x copy_size*4*4]
 end
 
 # IR spectra
@@ -104,7 +104,7 @@ function ir_spectra(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::M
 
     for (iν,ν) in enumerate(νk)
         for m in 1:nmols_ml
-            gp = gssn(ν, eigenvals[m], Δν)#1.15
+            gp = gssn(ν, eigenvals[m], Δν)
             gs = gssn(ν, eigenvals[m], Δν)
             ipda[iν] += unit2*σ[m]*μEpda[m] * gp
             isda[iν] += unit2*σ[m]*μEsda[m] * gs

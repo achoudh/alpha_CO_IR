@@ -57,7 +57,7 @@ function hstatT_h_matrix(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_o
 end
 
 # IR spectra
-function ir_spectra(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::Matrix{Float64}, Δν)
+function ir_spectra_h_matrix(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::Matrix{Float64}, Δν)
 
     # θ = x[1+0*nmols_ml:1*nmols_ml]
     # ϕ = x[1+1*nmols_ml:2*nmols_ml]
@@ -76,7 +76,7 @@ function ir_spectra(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::M
     #     eu[i,:] = [sin(θ[i]) * cos(ϕ[i]), sin(θ[i]) * sin(ϕ[i]), cos(θ[i])]
     # end
 
-    eigenvals, eigenvecs = hstatT(ev, eu, com_ol)
+    eigenvals, eigenvecs = hstatT_h_matrix(ev, eu, com_ol)
     σ = eigenvals ./ nmols_ml
 
     μEpda::Vector{Float64} = zeros(nmols_ml)
