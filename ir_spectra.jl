@@ -14,15 +14,23 @@ function hstatT(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::Matrix
         for n2::Int64 in n1+1:nmols_ml
 
             rvec12::Vector{Float64} = com_ol[n1,:] - com_ol[n2,:]
-            rvec12[1] = rvec12[1] - nx*round(Int, rvec12[1]/(nx))
-            rvec12[2] = rvec12[2] - ny*round(Int, rvec12[2]/(ny))
-            # rvec12[3] = rvec12[3] - ny*round(Int, rvec12[3]/(nz))
-
+            rvec12[1] = rvec12[1] - nx*round(Int, rvec12[1]/(nx)) # periodic boundary conditions in x
+            rvec12[2] = rvec12[2] - ny*round(Int, rvec12[2]/(ny)) # periodic boundary conditions in y
+            # rvec12[3] = rvec12[3] - ny*round(Int, rvec12[3]/(nz)) # periodic boundary conditions in z
+            
             rvec12 = a0_CO .* rvec12
             r12::Float64 = norm(rvec12)
             en::Vector{Float64} = rvec12/r12
 
-            force::Float64 = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
+            if Interaction_radius_cutoff == true
+                if r12 > interaction_cut_off_radius
+                    force = 0.0
+                else
+                    force::Float64 = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
+                end
+            else
+                force = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
+            end
         
             h[n1,n1] += force
             h[n2,n2] += force
@@ -37,9 +45,15 @@ function hstatT(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::Matrix
         h[n1,n1] = ev[n1] + unit1*(μ11 - μ00)*μ00*h[n1,n1]
     end
 
+    println(typeof(h))  # Matrix{Float64}
+    println(size(h))    # (copy_size*4*4, copy_size*4*4)
+    println(ndims(h))   # 2
+    println(size(h)[1])
+
     # return eigenvalues and eigenvectors
-    return eigen(h)
-       
+    # eigen(h) get eigenvalues and eigenvectors of h
+
+    return eigen(h) # [1D array of len: copy_size*4*4; 2D array of size copy_size*4*4 x copy_size*4*4]
 end
 
 # IR spectra
@@ -90,7 +104,7 @@ function ir_spectra(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::M
 
     for (iν,ν) in enumerate(νk)
         for m in 1:nmols_ml
-            gp = gssn(ν, eigenvals[m], Δν)#1.15
+            gp = gssn(ν, eigenvals[m], Δν)
             gs = gssn(ν, eigenvals[m], Δν)
             ipda[iν] += unit2*σ[m]*μEpda[m] * gp
             isda[iν] += unit2*σ[m]*μEsda[m] * gs
@@ -99,6 +113,5 @@ function ir_spectra(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::M
         end
     end
 
-    return ipda, isda, ip, is
+    return ipda, isda, ip, is, eigenvecs
 end
-
