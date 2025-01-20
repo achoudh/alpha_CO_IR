@@ -62,7 +62,7 @@ function ir_spectra_h_matrix(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, 
     # Unperturbed eigenvalues
     ev::Vector{Float64} = fill(ν0, nmols_ml)
     
-    zeros_h_matrix, h_matrix = hstatT_h_matrix(ev, eu, com_ol)
+    eigenvals, eigenvecs = hstatT_h_matrix(ev, eu, com_ol)
     σ = eigenvals ./ nmols_ml
 
     μEpda::Vector{Float64} = zeros(nmols_ml)
@@ -98,5 +98,5 @@ function ir_spectra_h_matrix(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, 
         end
     end
 
-    return ipda, isda, ip, is, h_matrix
+    return ipda, isda, ip, is, eigenvecs
 end
