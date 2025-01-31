@@ -78,13 +78,11 @@ function overlayer()
             end
         end
     end
-
-    uv_1 = 1.0
     
-    uvec_uc::Vector{Vector{Float64}} = [[ uv_1,  uv_1,  uv_1],   # unit cell vector
-                                        [ uv_1, -uv_1, -uv_1],
-                                        [-uv_1,  uv_1, -uv_1],
-                                        [-uv_1, -uv_1,  uv_1]]
+    uvec_uc::Vector{Vector{Float64}} = [[ 1,  1,  1],   # unit cell vector
+                                        [ 1, -1, -1],
+                                        [-1,  1, -1],
+                                        [-1, -1,  1]]
                                         
     uvec::Vector{Vector{Float64}}  = repeat(uvec_uc, outer=nx*ny*nz)
     # theta::Vector{Float64}  = repeat(θ_uc, outer=nx*ny*nz)

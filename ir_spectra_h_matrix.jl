@@ -10,6 +10,7 @@ function hstatT_h_matrix(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_o
     h::Matrix{Float64} = zeros(Float64, nmols_ml, nmols_ml)
 
     for n1::Int64 in 1:nmols_ml
+
         for n2::Int64 in n1+1:nmols_ml
 
             rvec12::Vector{Float64} = com_ol[n1,:] - com_ol[n2,:]
@@ -22,6 +23,7 @@ function hstatT_h_matrix(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_o
             rvec12 = a0_CO .* rvec12
             r12::Float64 = norm(rvec12)
             en::Vector{Float64} = rvec12/r12
+            
             if Interaction_radius_cutoff == true
                 if r12 > interaction_cut_off_radius
                     force = 0.0

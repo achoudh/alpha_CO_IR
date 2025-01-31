@@ -10,6 +10,7 @@ function hstatT_centre(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol:
     h::Matrix{Float64} = zeros(Float64, nmols_centre, nmols_centre)
 
     for n1::Int64 in 1:nmols_centre
+        
         for n2::Int64 in n1+1:nmols_centre
 
             rvec12::Vector{Float64} = com_ol[n1,:] - com_ol[n2,:]
