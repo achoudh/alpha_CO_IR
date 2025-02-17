@@ -25,10 +25,11 @@ function hstatT_centre(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol:
             en::Vector{Float64} = rvec12/r12
 
             if Interaction_radius_cutoff == true
-                if r12 > interaction_cut_off_radius
+                if r12 > interaction_cut_off_radius * a0_CO || norm(com_ol[n1,:]*a0_CO - position_z_centre) >= interaction_cut_off_radius * a0_CO || norm(com_ol[n2,:]*a0_CO - position_z_centre) >= interaction_cut_off_radius * a0_CO
                     force = 0.0
                 else
                     force::Float64 = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
+                    print("n2",n2)
                 end
             else
                 force = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
@@ -40,17 +41,16 @@ function hstatT_centre(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol:
             h[n2,n1] = h[n1,n2]
 
         end
-
     end
 
     for n1::Int64 in 1:nmols_centre
         h[n1,n1] = large_h_matrix_sum[n1] # ev[n1] + unit1*(μ11 - μ00)*μ00*h[n1,n1]
     end
 
-    println(typeof(h))  # Matrix{Float64}
+    #println(typeof(h))  # Matrix{Float64}
     println(size(h))    # (copy_size*4*4, copy_size*4*4)
-    println(ndims(h))   # 2
-    println(size(h)[1])
+    #println(ndims(h))   # 2
+    #println(size(h)[1])
 
     # return eigenvalues and eigenvectors
     # eigen(h) get eigenvalues and eigenvectors of h

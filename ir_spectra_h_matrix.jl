@@ -24,15 +24,8 @@ function hstatT_h_matrix(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_o
             r12::Float64 = norm(rvec12)
             en::Vector{Float64} = rvec12/r12
             
-            if Interaction_radius_cutoff == true
-                if r12 > interaction_cut_off_radius * a0_CO 
-                    force = 0.0
-                else
-                    force::Float64 = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
-                end
-            else
-                force = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
-            end
+            force::Float64 = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
+
         
             h[n1,n1] += force
             h[n2,n2] += force
