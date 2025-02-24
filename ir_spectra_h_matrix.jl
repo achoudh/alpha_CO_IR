@@ -8,7 +8,7 @@ gssn(ν, ν0, Δν) = exp(-(ν - ν0)^2 / (2 * sσ(Δν)^2)) / (sσ(Δν) * sqrt
 function hstatT_h_matrix(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::Matrix{Float64})
 
     h::Matrix{Float64} = zeros(Float64, nmols_ml, nmols_ml)
-
+    count_n2 = 0
     for n1::Int64 in 1:nmols_ml
 
         for n2::Int64 in n1+1:nmols_ml
@@ -25,6 +25,7 @@ function hstatT_h_matrix(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_o
             en::Vector{Float64} = rvec12/r12
             
             force::Float64 = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
+            count_n2 += 1
 
         
             h[n1,n1] += force
@@ -39,6 +40,8 @@ function hstatT_h_matrix(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_o
     for n1::Int64 in 1:nmols_ml
         h[n1,n1] = ev[n1] + unit1*(μ11 - μ00)*μ00*h[n1,n1]
     end
+    println(" count_n2:",count_n2)
+    print(length(diag(h)))
 
     println(typeof(h))  # Matrix{Float64}
     println(size(h))    # (copy_size*4*4, copy_size*4*4)
