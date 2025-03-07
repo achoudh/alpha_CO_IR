@@ -45,7 +45,7 @@ com_ol::Matrix{Float64}, eu::Vector{Vector{Float64}} = overlayer()
 ######################
 
 # Data to built up the wavenumber array
-range   = 10  # "Wavenumbers"
+range   = 24  # "Wavenumbers"
 dtponts = 5*200
 step    = 2 * (range / dtponts)
 # νk = collect(ν0[2] - range :step:ν0[1] + range)

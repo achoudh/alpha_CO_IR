@@ -8,7 +8,7 @@ gssn(ν, ν0, Δν) = exp(-(ν - ν0)^2 / (2 * sσ(Δν)^2)) / (sσ(Δν) * sqrt
 function hstatT_centre(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::Matrix{Float64}, large_h_matrix_sum)
 
     h::Matrix{Float64} = zeros(Float64, nmols_centre, nmols_centre)
-    count_n2 = 0
+    #count_n2 = 0
     for n1::Int64 in 1:nmols_centre
         
         for n2::Int64 in n1+1:nmols_centre
@@ -16,7 +16,7 @@ function hstatT_centre(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol:
             rvec12[1] = rvec12[1] - nx*round(Int, rvec12[1]/(nx)) # periodic boundary conditions in x
             rvec12[2] = rvec12[2] - ny*round(Int, rvec12[2]/(ny)) # periodic boundary conditions in y
             if z_boundary_conditions == true
-                rvec12[3] = rvec12[3] - ny*round(Int, rvec12[3]/(nz)) # periodic boundary conditions in z
+                rvec12[3] = rvec12[3] - nz*round(Int, rvec12[3]/(nz)) # periodic boundary conditions in z
             end
             
             rvec12 = a0_CO .* rvec12
@@ -24,26 +24,23 @@ function hstatT_centre(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol:
             en::Vector{Float64} = rvec12/r12
             if Interaction_radius_cutoff == true
                 if Interaction_centre_inside_unit_cell == false
-                    if norm(com_ol[n1,:]*a0_CO - position_z_centre) >= interaction_cut_off_radius * a0_CO || norm(com_ol[n2,:]*a0_CO - position_z_centre) >= interaction_cut_off_radius * a0_CO # r12 >= interaction_cut_off_radius * a0_CO  || norm(com_ol[n1,:]*a0_CO - position_z_centre) >= interaction_cut_off_radius * a0_CO || norm(com_ol[n2,:]*a0_CO - position_z_centre) >= interaction_cut_off_radius * a0_CO
+                    if r12 >= interaction_cut_off_radius * a0_CO #norm(com_ol[n1,:]*a0_CO - position_z_centre) >= interaction_cut_off_radius * a0_CO || norm(com_ol[n2,:]*a0_CO - position_z_centre) >= interaction_cut_off_radius * a0_CO # r12 >= interaction_cut_off_radius * a0_CO  || norm(com_ol[n1,:]*a0_CO - position_z_centre) >= interaction_cut_off_radius * a0_CO || norm(com_ol[n2,:]*a0_CO - position_z_centre) >= interaction_cut_off_radius * a0_CO
                         force = 0.0   # force::Float64
                     else
                         force = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
-                        count_n2 += 1
-                        #print("n1:",n1," n2:",n2," ")
+                        #count_n2 += 1
                     end
                 else # Interaction_centre_inside_unit_cell == true
-                    if norm(com_ol[n1,:]*a0_CO - position_z_centre) > interaction_cut_off_radius * a0_CO || norm(com_ol[n2,:]*a0_CO - position_z_centre) > interaction_cut_off_radius * a0_CO # either n1 or n2 are more than interaction_cut_off_radius away from the centre
+                    if r12 >= interaction_cut_off_radius * a0_CO #norm(com_ol[n1,:]*a0_CO - position_z_centre) > interaction_cut_off_radius * a0_CO || norm(com_ol[n2,:]*a0_CO - position_z_centre) > interaction_cut_off_radius * a0_CO # either n1 or n2 are more than interaction_cut_off_radius away from the centre
                         force = 0.0
                     else
                         force = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
-                        count_n2 += 1
-                        #print(" r12:", r12)
-                        #print("n1:",n1," n2:",n2," ")
+                        #count_n2 += 1
                     end
                 end
-            else
+            else # Interaction_radius_cutoff == false
                 force = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
-                count_n2 += 1
+                #count_n2 += 1
             end
 
             h[n1,n1] += force
@@ -55,28 +52,50 @@ function hstatT_centre(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol:
     end
 
     for n1::Int64 in 1:nmols_centre
-        h[n1,n1] = large_h_matrix_sum[n1] # ev[n1] + unit1*(μ11 - μ00)*μ00*h[n1,n1]
+        #h[n1,n1] = large_h_matrix_sum[n1] # ev[n1] + unit1*(μ11 - μ00)*μ00*h[n1,n1]
+        h[n1,n1] = ev[n1] + unit1*(μ11 - μ00)*μ00*h[n1,n1]
     end
-    println(" count_n2:",count_n2)
+    #println(" count_n2:",count_n2)
 
-    #println(typeof(h))  # Matrix{Float64}
-    #println(size(h))    # (copy_size*4*4, copy_size*4*4)
-    #println(ndims(h))   # 2
-    #println(size(h)[1])
-
+    # println(typeof(h))  # Matrix{Float64}
+    # println(size(h))    # (copy_size*4*4, copy_size*4*4)
+    # println(ndims(h))   # 2
+    # println(size(h)[1])
+    
+    # println("Matrix h:")
+    # for row in 1:size(h, 1)
+    #     println(h[row, :])
+    # end
     # return eigenvalues and eigenvectors
     # eigen(h) get eigenvalues and eigenvectors of h
-    return eigen(h) # [1D array of len: copy_size*4*4; 2D array of size copy_size*4*4 x copy_size*4*4]
+    return eigen(h), h # [1D array of len: copy_size*4*4; 2D array of size copy_size*4*4 x copy_size*4*4]
 end
 
 # IR spectra
 function ir_spectra_centre(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, com_ol::Matrix{Float64}, Δν, nmols_centre::Int64, large_h_matrix_sum)
 
-    # Unperturbed eigenvalues
-    ev::Vector{Float64} = fill(ν0, nmols_centre)
-    print(nmols_centre)
+    # if excitation_on == true, for each flipped  molecule, if θ < 0.5*pi, ν0[1] else ν0[2], 
+    #     ev::Vector{Float64} = zeros(nmols_centre)
+    #     for i in 1:nmols_ml
+    #         ev[i] = θ[i] < 0.5*pi ? ν0[1] : ν0[2]
+    #     end    
+    # end
+    ev::Vector{Float64} = fill(ν0, nmols_centre)   # Unperturbed eigenvalues
 
-    eigenvals, eigenvecs = hstatT_centre(ev, eu, com_ol, large_h_matrix_sum) # is with eu=eu_unit_vector_centre,  com_ol=com_ol_centre to get small simulation box h_matrix 
+    if excitation_on == true # if true then randomly excite a excitation_fraction of molecules (# nmols_centre)
+        absorption_amplitude_scaling = ones(nmols_centre).*groundstate_population*sigma_01 # for population difference (p_i - p_(i+1)*sigma_01*i)
+        #ev::Vector{Float64} = fill(ν0, nmols_centre)
+        num_excited = round(Int, excitation_fraction * nmols_centre)
+        excited_indices = randperm(nmols_centre)[1:num_excited]
+        for i in excited_indices #  v=1 excitation the frequency and the absorption amplitude has to be adapted
+            ev[i] = ν0 - v_excitation_shift
+            absorption_amplitude_scaling[i] = excitation_fraction*2*sigma_01
+        end  
+    else
+        absorption_amplitude_scaling = ones(nmols_centre)
+    end
+
+    (eigenvals, eigenvecs), h_centre = hstatT_centre(ev, eu, com_ol, large_h_matrix_sum) # is with eu=eu_unit_vector_centre,  com_ol=com_ol_centre to get small simulation box h_matrix 
 
     σ = eigenvals ./ nmols_centre
 
@@ -105,8 +124,8 @@ function ir_spectra_centre(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, co
 
     for (iν,ν) in enumerate(νk)
         for m in 1:nmols_centre
-            gp = gssn(ν, eigenvals[m], Δν)
-            gs = gssn(ν, eigenvals[m], Δν)
+            gp = gssn(ν, eigenvals[m], Δν) * absorption_amplitude_scaling[m]
+            gs = gssn(ν, eigenvals[m], Δν) * absorption_amplitude_scaling[m]
             ipda[iν] += unit2*σ[m]*μEpda[m] * gp
             isda[iν] += unit2*σ[m]*μEsda[m] * gs
             ip[iν] += unit2*σ[m]*μEp[m] * gp
@@ -114,5 +133,5 @@ function ir_spectra_centre(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, co
         end
     end
 
-    return ipda, isda, ip, is, eigenvecs
+    return ipda, isda, ip, is, eigenvecs, h_centre
 end
