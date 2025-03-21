@@ -83,19 +83,21 @@ function ir_spectra_centre(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, co
     ev::Vector{Float64} = fill(ν0, nmols_centre)   # Unperturbed eigenvalues
 
     if excitation_on == true # if true then randomly excite a excitation_fraction of molecules (# nmols_centre)
-        absorption_amplitude_scaling = ones(nmols_centre).*groundstate_population*sigma_01 # for population difference (p_i - p_(i+1)*sigma_01*i)
+        absorption_amplitude_scaling = ones(nmols_centre).*(groundstate_population - excitation_fraction)*sigma_01 # for population difference ((p_i - p_(i+1))*sigma_01*i)
+
         #ev::Vector{Float64} = fill(ν0, nmols_centre)
-        num_excited = round(Int, excitation_fraction * nmols_centre)
-        excited_indices = randperm(nmols_centre)[1:num_excited]
-        for i in excited_indices #  v=1 excitation the frequency and the absorption amplitude has to be adapted
+        #num_excited = round(Int, excitation_fraction * nmols_centre)
+        #excited_indices = randperm(nmols_centre)[1:num_excited]
+
+        for i in excited_indices #  v = 1 excitation the frequency and the absorption amplitude has to be adapted
             ev[i] = ν0 - v_excitation_shift
             absorption_amplitude_scaling[i] = excitation_fraction*2*sigma_01
-        end  
+        end
     else
         absorption_amplitude_scaling = ones(nmols_centre)
     end
 
-    (eigenvals, eigenvecs), h_centre = hstatT_centre(ev, eu, com_ol, large_h_matrix_sum) # is with eu=eu_unit_vector_centre,  com_ol=com_ol_centre to get small simulation box h_matrix 
+    (eigenvals, eigenvecs), h_centre = hstatT_centre(ev, eu, com_ol, large_h_matrix_sum)  # is with eu=eu_unit_vector_centre,  com_ol=com_ol_centre to get small simulation box h_matrix 
 
     σ = eigenvals ./ nmols_centre
 
@@ -103,10 +105,10 @@ function ir_spectra_centre(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, co
     μEsda::Vector{Float64} = zeros(nmols_centre)
     μEp::Vector{Float64}   = zeros(nmols_centre)
     μEs::Vector{Float64}   = zeros(nmols_centre)
-    pl::Matrix{Float64}    = zeros(nmols_centre,3)
+    pl::Matrix{Float64}    = zeros(nmols_centre,3) # Absorption cross section
     for m::Int64 in 1:nmols_centre # loop over eigenvecs
         for i::Int64 in 1:nmols_centre # loop over molecules
-            pl[m,:] += eigenvecs[i, m]*(μ01 .* eu[i][:])
+            pl[m,:] += eigenvecs[i, m]*(μ01 .* eu[i][:]) * absorption_amplitude_scaling[i]
         end
         # Single domain
         μEp[m] = dot(pl[m,:],ep)^2
@@ -114,7 +116,6 @@ function ir_spectra_centre(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, co
         # Domain average
         μEpda[m] = (0.5*((pl[m,1])^2 + (pl[m,2])^2)*Tx + (pl[m,3])^2 *Tz)
         μEsda[m] = 0.5*(pl[m,1]^2 + pl[m,2]^2)*Ty
-        
     end
 
     ipda::Vector{Float64} = zeros(size(νk,1))
@@ -124,8 +125,8 @@ function ir_spectra_centre(νk::Vector{Float64}, eu::Vector{Vector{Float64}}, co
 
     for (iν,ν) in enumerate(νk)
         for m in 1:nmols_centre
-            gp = gssn(ν, eigenvals[m], Δν) * absorption_amplitude_scaling[m]
-            gs = gssn(ν, eigenvals[m], Δν) * absorption_amplitude_scaling[m]
+            gp = gssn(ν, eigenvals[m], Δν)
+            gs = gssn(ν, eigenvals[m], Δν)
             ipda[iν] += unit2*σ[m]*μEpda[m] * gp
             isda[iν] += unit2*σ[m]*μEsda[m] * gs
             ip[iν] += unit2*σ[m]*μEp[m] * gp
