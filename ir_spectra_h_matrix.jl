@@ -27,14 +27,12 @@ function hstatT_h_matrix(ev::Vector{Float64}, eu::Vector{Vector{Float64}}, com_o
             force::Float64 = (dot(eu[n1][:], eu[n2][:]) - 3.0*dot(en, eu[n1][:])*dot(en, eu[n2][:])) / r12^3
             count_n2 += 1
 
-        
             h[n1,n1] += force
             h[n2,n2] += force
             h[n1,n2] = unit1*μ01^2*force
             h[n2,n1] = h[n1,n2]
 
         end
-
     end
 
     for n1::Int64 in 1:nmols_ml
